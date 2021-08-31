@@ -1,0 +1,49 @@
+2020-9-25错误记录:
+ByteBufHexString:
+7479 7065 403d 6368 6174 6d73 672f 7269 
+6440 3d31 3132 3639 3630 2f63 7440 3d31 
+362f 7569 6440 3d31 3938 3436 3936 3335 
+302f 6e6e 403d e7ab 99e5 a496 5f4d 6143 
+2f74 7874 403d 4848 4848 4848 4848 4848 
+5c2f 6369 6440 3d62 6333 6437 6631 6466 
+3938 6134 6464 3530 3830 6530 3130 3030 
+3030 3030 3030 302f 6963 403d 2f6c 6576 
+656c 403d 302f 7361 6866 403d 302f 7267 
+403d 302f 7067 403d 302f 626e 6e40 3d2f 
+626c 403d 302f 6272 6964 403d 302f 6863 
+403d 2f65 6c40 3d2f 6c6b 403d 2f70 6964 
+403d 3735 3333 3637 3233 2f70 6467 403d 
+3531 2f70 646b 403d 3738 2f 
+ txt: 
+type@=chatmsg/rid@=1126960/ct@=16/uid@=1984696350/nn@=站外_MaC/txt@=HHHHHHHHHH\/cid@=bc3d7f1df98a4dd5080e010000000000/ic@=/level@=0/sahf@=0/rg@=0/pg@=0/bnn@=/bl@=0/brid@=0/hc@=/el@=/lk@=/pid@=75336723/pdg@=51/pdk@=78/ 
+ jsonString: 
+{"type":"chatmsg","rid":"1126960","ct":"16","uid":"1984696350","nn":"站外_MaC","txt":"HHHHHHHHHH\","cid":"bc3d7f1df98a4dd5080e010000000000","ic":"","level":"0","sahf":"0","rg":"0","pg":"0","bnn":"","bl":"0","brid":"0","hc":"","el":"","lk":"","pid":"75336723","pdg":"51","pdk":"78"}
+[nioEventLoopGroup-2-2] ERROR com.yijianguanzhu.douyu.handler.DouyuByteToMessageHandler - Un-Excepted Error occured. Cause By: 
+
+com.fasterxml.jackson.core.JsonParseException: Unexpected character ('c' (code 99)): was expecting comma to separate Object entries
+ at [Source: (String)"{"type":"chatmsg","rid":"1126960","ct":"16","uid":"1984696350","nn":"站外_MaC","txt":"HHHHHHHHHH\","cid":"bc3d7f1df98a4dd5080e010000000000","ic":"","level":"0","sahf":"0","rg":"0","pg":"0","bnn":"","bl":"0","brid":"0","hc":"","el":"","lk":"","pid":"75336723","pdg":"51","pdk":"78"}"; line: 1, column: 100]
+------------------------------------------------------------------------------------------------------------------------------------
+  ByteBufHexString:
+ 7479 7065 403d 6368 6174 6d73 672f 7269
+ 6440 3d31 3132 3639 3630 2f63 7440 3d31
+ 362f 7569 6440 3d39 3235 3230 3735 3434
+ 2f6e 6e40 3de7 ab99 e5a4 965f e8b0 81e5
+ 8fab e688 91e8 baab e689 8be4 b88d e587
+ a163 2f74 7874 403d 3f5c 2f63 6964 403d
+ 3462 3265 3236 3465 3834 3861 3462 3533
+ 3939 3065 3031 3030 3030 3030 3030 3030
+ 2f69 6340 3d2f 6c65 7665 6c40 3d30 2f73
+ 6168 6640 3d30 2f72 6740 3d30 2f70 6740
+ 3d30 2f62 6e6e 403d 2f62 6c40 3d30 2f62
+ 7269 6440 3d30 2f68 6340 3d2f 656c 403d
+ 2f6c 6b40 3d2f 7069 6440 3d37 3533 3336
+ 3732 332f 7064 6740 3d32 362f 7064 6b40
+ 3d38 392f
+  txt:
+ type@=chatmsg/rid@=1126960/ct@=16/uid@=925207544/nn@=站外_谁叫我身手不凡c/txt@=?\/cid@=4b2e264e848a4b53990e010000000000/ic@=/level@=0/sahf@=0/rg@=0/pg@=0/bnn@=/bl@=0/brid@=0/hc@=/el@=/lk@=/pid@=75336723/pdg@=26/pdk@=89/
+  jsonString:
+ {"type":"chatmsg","rid":"1126960","ct":"16","uid":"925207544","nn":"站外_谁叫我身手不凡c","txt":"?\","cid":"4b2e264e848a4b53990e010000000000","ic":"","level":"0","sahf":"0","rg":"0","pg":"0","bnn":"","bl":"0","brid":"0","hc":"","el":"","lk":"","pid":"75336723","pdg":"26","pdk":"89"}
+ [nioEventLoopGroup-2-2] ERROR com.yijianguanzhu.douyu.handler.DouyuByteToMessageHandler - Un-Excepted Error occured. Cause By:
+
+ com.fasterxml.jackson.core.JsonParseException: Unexpected character ('c' (code 99)): was expecting comma to separate Object entries
+  at [Source: (String)"{"type":"chatmsg","rid":"1126960","ct":"16","uid":"925207544","nn":"站外_谁叫我身手不凡c","txt":"?\","cid":"4b2e264e848a4b53990e010000000000","ic":"","level":"0","sahf":"0","rg":"0","pg":"0","bnn":"","bl":"0","brid":"0","hc":"","el":"","lk":"","pid":"75336723","pdg":"26","pdk":"89"}"; line: 1, column: 95]
