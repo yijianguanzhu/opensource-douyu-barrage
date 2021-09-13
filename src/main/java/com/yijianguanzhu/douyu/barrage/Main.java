@@ -21,6 +21,7 @@ package com.yijianguanzhu.douyu.barrage;
 
 import com.yijianguanzhu.douyu.barrage.bootstrap.Douyu;
 import com.yijianguanzhu.douyu.barrage.enums.MessageType;
+import com.yijianguanzhu.douyu.barrage.model.DouyuCookie;
 
 /**
  * @author yijianguanzhu 2020年9月12日
@@ -28,6 +29,10 @@ import com.yijianguanzhu.douyu.barrage.enums.MessageType;
 public class Main {
 	public static void main( String[] args ) {
 		// System.setProperty( "org.slf4j.simpleLogger.defaultLogLevel", "debug" );
+
+		/**
+		 * 拉取弹幕示例代码(不需要登陆)
+		 */
 		Douyu.pull().registerMessageListener( MessageType.CHAT_MSG, ( jsonString, baseMessage, context ) -> {
 			StringBuilder builder = new StringBuilder();
 			builder.append( "[辛巴][lv" ).append( baseMessage.getLevel() )
@@ -38,51 +43,30 @@ public class Main {
 				.login();
 		Douyu.pull().registerMessageListener( MessageType.CHAT_MSG, ( jsonString, baseMessage, context ) -> {
 			StringBuilder builder = new StringBuilder();
-			builder.append( "[余小C][lv" ).append( baseMessage.getLevel() )
-					.append( "][" ).append( baseMessage.getNn() )
-					.append( "]: " ).append( baseMessage.getTxt() );
-			System.out.println( builder.toString() );
-		} ).room().roomId( 1126960L )
-				.login();
-		Douyu.pull().registerMessageListener( MessageType.CHAT_MSG, ( jsonString, baseMessage, context ) -> {
-			StringBuilder builder = new StringBuilder();
 			builder.append( "[智勋][lv" ).append( baseMessage.getLevel() )
 					.append( "][" ).append( baseMessage.getNn() )
 					.append( "]: " ).append( baseMessage.getTxt() );
 			System.out.println( builder.toString() );
 		} ).room().roomId( 312212L )
 				.login();
-		Douyu.pull().registerMessageListener( MessageType.CHAT_MSG, ( jsonString, baseMessage, context ) -> {
-			StringBuilder builder = new StringBuilder();
-			builder.append( "[基伦][lv" ).append( baseMessage.getLevel() )
-					.append( "][" ).append( baseMessage.getNn() )
-					.append( "]: " ).append( baseMessage.getTxt() );
-			System.out.println( builder.toString() );
-		} ).room().roomId( 149985L )
-				.login();
-		Douyu.pull().registerMessageListener( MessageType.CHAT_MSG, ( jsonString, baseMessage, context ) -> {
-			StringBuilder builder = new StringBuilder();
-			builder.append( "[芜湖大司马][lv" ).append( baseMessage.getLevel() )
-					.append( "][" ).append( baseMessage.getNn() )
-					.append( "]: " ).append( baseMessage.getTxt() );
-			System.out.println( builder.toString() );
-		} ).room().roomId( 606118L )
-				.login();
-		Douyu.pull().registerMessageListener( MessageType.CHAT_MSG, ( jsonString, baseMessage, context ) -> {
-			StringBuilder builder = new StringBuilder();
-			builder.append( "[王纪超][lv" ).append( baseMessage.getLevel() )
-					.append( "][" ).append( baseMessage.getNn() )
-					.append( "]: " ).append( baseMessage.getTxt() );
-			System.out.println( builder.toString() );
-		} ).room().roomId( 3567314L )
-				.login();
-		Douyu.pull().registerMessageListener( MessageType.CHAT_MSG, ( jsonString, baseMessage, context ) -> {
-			StringBuilder builder = new StringBuilder();
-			builder.append( "[兰林汉][lv" ).append( baseMessage.getLevel() )
-					.append( "][" ).append( baseMessage.getNn() )
-					.append( "]: " ).append( baseMessage.getTxt() );
-			System.out.println( builder.toString() );
-		} ).room().roomId( 475252L )
-				.login();
+
+		/**
+		 * 挂机直播间示例代码(需要登陆)，登录信息可从网页里的cookie获取，
+		 * 也可以使用{@link https://github.com/yijianguanzhu/douyu-hongbao}工具扫码登录后，从cookie.txt文件找到相关信息
+		 */
+		DouyuCookie cookie = new DouyuCookie();
+		// 从cookie.txt文件中找到acf_biz对应的值
+		cookie.setAcf_biz( 1 );
+		// 从cookie.txt文件中找到acf_devid对应的值
+		cookie.setAcf_did( "xxx" );
+		// 从cookie.txt文件中找到acf_ltkid对应的值
+		cookie.setAcf_ltkid( 10L );
+		// 从cookie.txt文件中找到acf_username对应的值
+		cookie.setAcf_username( "xxxx" );
+		// 从cookie.txt文件中找到acf_stk对应的值
+		cookie.setAcf_stk( "xxxx" );
+		Douyu.push( cookie ).registerMessageListener( MessageType.ALL, ( a, b, c ) -> {
+			System.out.println( a );
+		} ).room().roomId( 312212L ).login();
 	}
 }
