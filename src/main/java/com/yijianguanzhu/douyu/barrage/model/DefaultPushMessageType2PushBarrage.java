@@ -15,12 +15,15 @@
  */
 
 /**
- * 
+ *
  */
 package com.yijianguanzhu.douyu.barrage.model;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author yijianguanzhu 2020年7月8日
@@ -29,21 +32,21 @@ import lombok.Setter;
 @Setter
 public class DefaultPushMessageType2PushBarrage extends DefaultPushMessageType {
 
+	public static final SimpleDateFormat SDF = new SimpleDateFormat( "yyyyMMdd" );
+
 	public DefaultPushMessageType2PushBarrage() {
 		this.keeplive = "type@=keeplive/vbw@=0/cdn@=/tick@=%s/kd@=/";
 		this.login = "type@=loginreq/roomid@=%d/"
-				+ "dfl@=sn@AA=105@ASss@AA=1/"
 				+ "username@=%s/password@=/ltkid@=%d/biz@=%d/"
 				+ "stk@=%s/devid@=%s/"
-				+ "/ct@=0/pt@=2/cvr@=0/tvr@=7/apd@=/"
+				+ "ct@=0/pt@=2/"
 				+ "rt@=%d/"
 				+ "vk@=%s/"
-				+ "ver@=20190610/aver@=218101901/dmbt@=chrome/dmbv@=86/";
-		this.joinGroup = "type@=h5ckreq/rid@=%d/ti@=220120201016";
-		this.pushMessage = "content@=%s/col@=3/type@=chatmessage/"
-				+ "dy@=%s/"
-				+ "sender@=%d/ifs@=1/nc@=0/dat@=0/"
-				+ "rev@=0/admzq@=0/cst@=%d/dmt@=9/dmvv@=015c1db564";
+				+ "ver@=20180222/aver@=219032101/dmbt@=mobile safari/dmbv@=11/";
+		this.joinGroup = "type@=h5ckreq/rid@=%d/ti@=2501" + SDF.format( new Date() );
+		this.pushMessage = "content@=%s/col@=0/type@=chatmessage/"
+				+ "sender@=%d/ifs@=0/nc@=0/dat@=0/"
+				+ "rev@=0/admzq@=0/cst@=%d/dmt@=3/";
 		this.logout = "type@=logout/";
 		this.gid = 1;
 	}

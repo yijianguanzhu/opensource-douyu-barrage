@@ -80,7 +80,7 @@ public final class Message2BeanUtil {
 			String key;
 			builder.append( key = key( keyVal[0] ) ).append( COLON );
 			if ( TXT.equals( key ) ) {
-				builder.append( txtValue( keyVal[1] ) );
+				builder.append( keyVal.length != 2 ? null : txtValue( keyVal[1] ) );
 			}
 			else {
 				String value = keyVal.length > 1 ? keyVal[1] : "";

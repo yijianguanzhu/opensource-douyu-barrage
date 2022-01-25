@@ -32,7 +32,7 @@ public final class EncodeMessageWrapper {
 	public static ByteBuffer encode( String msg ) {
 
 		String sendMsg = msg + '\0';// 以 '\0'结尾
-		int length = 4 + 4 + sendMsg.length();
+		int length = 4 + 4 + sendMsg.getBytes( StandardCharsets.UTF_8 ).length;
 
 		ByteBuffer buf = ByteBuffer.wrap( new byte[length + 4] );// 4是额外一个消息的长度,
 																															// 不计入消息长度，因此在这里添加;

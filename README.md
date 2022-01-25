@@ -4,7 +4,7 @@
 ## 使用说明
 1. 获取弹幕功能示例在com.yijianguanzhu.douyu.barrage#Main类中。
 
-2. 挂机直播间功能示例在com.yijianguanzhu.douyu.barrage#Main类中，只能挂机，无法发送弹幕，发送弹幕的技术没有突破，最多只能做到挂机直播间、领取荧光棒、监控房间宝箱等，做一些PC看直播时长的任务，斗鱼看直播时长就是根据登入斗鱼弹幕时长来计算。
+2. 发送弹幕/挂机直播间功能示例在com.yijianguanzhu.douyu.barrage#Main类中。
 
 ## 交流
 如果你有更好的想法，欢迎加入QQ群：250097154
