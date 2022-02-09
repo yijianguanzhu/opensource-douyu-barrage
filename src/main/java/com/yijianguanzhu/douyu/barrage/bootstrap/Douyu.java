@@ -20,6 +20,7 @@ import com.yijianguanzhu.douyu.barrage.enums.BaseMessageTypeEnum;
 import com.yijianguanzhu.douyu.barrage.function.BiConsumer;
 import com.yijianguanzhu.douyu.barrage.model.BaseMessage;
 import com.yijianguanzhu.douyu.barrage.model.DouyuCookie;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.LinkedHashMap;
@@ -60,16 +61,12 @@ public class Douyu {
 		}
 
 		public DouyuRoom room() {
-			if ( isPush ) {
-				return new DouyuRoom( this.messageListener, cookie );
-			}
-			return new DouyuRoom( this.messageListener );
+			return isPush ? new DouyuRoom( this.messageListener, cookie ) : new DouyuRoom( this.messageListener );
 		}
 	}
 
 	public static class DouyuRoom {
 		private Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener;
-		private long roomId;
 		/**
 		 * 当与服务端断开连接时，是否重连服务端，默认值 false
 		 */
@@ -95,11 +92,7 @@ public class Douyu {
 		}
 
 		public DouyuBootstrap roomId( long roomId ) {
-			this.roomId = roomId;
-			if ( isPush ) {
-				return new DouyuBootstrap( this.messageListener, this.roomId, this.cookie, this.retry );
-			}
-			return new DouyuBootstrap( this.messageListener, this.roomId, this.retry );
+			return isPush ? new DouyuBootstrap( this.messageListener, roomId, this.cookie, this.retry ) : new DouyuBootstrap( this.messageListener, roomId, this.retry );
 		}
 	}
 
@@ -128,12 +121,8 @@ public class Douyu {
 			this.retry = retry;
 		}
 
-		public void login() {
-			if ( this.isPush ) {
-				DefaultWebSocketClientConfiguration.login( roomId, messageListener, cookie, retry );
-				return;
-			}
-			DefaultWebSocketClientConfiguration.login( roomId, messageListener, retry );
+		public ChannelFuture login() {
+			return this.isPush ? DefaultWebSocketClientConfiguration.login( roomId, messageListener, cookie, retry ) : DefaultWebSocketClientConfiguration.login( roomId, messageListener, retry );
 		}
 	}
 }

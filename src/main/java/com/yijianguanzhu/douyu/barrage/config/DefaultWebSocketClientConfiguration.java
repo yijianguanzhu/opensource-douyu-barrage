@@ -50,17 +50,17 @@ public class DefaultWebSocketClientConfiguration {
 	/**
 	 * 拉取弹幕入口
 	 */
-	public static void login( long roomId,
+	public static ChannelFuture login( long roomId,
 			Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener,
 			boolean retry ) {
 		BaseBarrageServerConnectionAddress address = BasePullBarrageServerConnectionAddress.PULL_ADDRESS.next();
-		connect( address, DouyuConfiguration.defaultPullMessageType(), messageListener, retry, roomId );
+		return connect( address, DouyuConfiguration.defaultPullMessageType(), messageListener, retry, roomId );
 	}
 
 	/**
 	 * 挂机直播间入口
 	 */
-	public static void login( long roomId,
+	public static ChannelFuture login( long roomId,
 			Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener,
 			DouyuCookie cookie, boolean retry ) {
 		BaseBarrageServerConnectionAddress address = BasePushBarrageServerConnectionAddress.PUSH_ADDRESS.next();
@@ -72,7 +72,7 @@ public class DefaultWebSocketClientConfiguration {
 		/**
 		 * 挂机直播间不允许断线重连，如需要这个功能，由上层实现。
 		 */
-		connect( address, pushBarrage, messageListener, retry, roomId );
+		return connect( address, pushBarrage, messageListener, retry, roomId );
 	}
 
 	public static ChannelFuture connect( BaseBarrageServerConnectionAddress address, DefaultPushMessageType messageType,

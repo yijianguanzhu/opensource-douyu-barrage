@@ -42,7 +42,7 @@ public class DefaultPushMessageType2PushBarrage extends DefaultPushMessageType {
 				+ "ct@=0/pt@=2/"
 				+ "rt@=%d/"
 				+ "vk@=%s/"
-				+ "ver@=20180222/aver@=219032101/dmbt@=mobile safari/dmbv@=11/";
+				+ "ver@=20180222/aver@=219032101/dmbt@=chrome/dmbv@=98/";
 		this.joinGroup = "type@=h5ckreq/rid@=%d/ti@=2501" + SDF.format( new Date() );
 		this.pushMessage = "content@=%s/col@=0/type@=chatmessage/"
 				+ "sender@=%d/ifs@=0/nc@=0/dat@=0/"
