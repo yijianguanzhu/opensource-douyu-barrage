@@ -26,6 +26,7 @@ import com.yijianguanzhu.douyu.barrage.enums.MessageType;
 import com.yijianguanzhu.douyu.barrage.function.BiConsumer;
 import com.yijianguanzhu.douyu.barrage.model.BaseMessage;
 import com.yijianguanzhu.douyu.barrage.model.DefaultPushMessageType;
+import com.yijianguanzhu.douyu.barrage.model.DouyuCookie;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -33,6 +34,7 @@ import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler.ClientHandshakeStateEvent;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -49,6 +51,8 @@ public class DouyuAutoJoinBarrageServerHandler extends ChannelDuplexHandler {
 	private Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener;
 	private boolean retry;
 	private BaseBarrageServerConnectionAddress address;
+	@Setter
+	private DouyuCookie douyuCookie;
 
 	public DouyuAutoJoinBarrageServerHandler( DefaultPushMessageType messageType, long roomId,
 			Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener,
@@ -162,8 +166,10 @@ public class DouyuAutoJoinBarrageServerHandler extends ChannelDuplexHandler {
 	private void add( ChannelPipeline pipeline ) {
 		pipeline.addLast( new DouyuMessageDispatchHandler( this.messageListener ) );
 		if ( this.retry ) {
-			pipeline
-					.addLast( new DouyuReconnectionBarrageServerHandler( address, messageListener, roomId, defaultMessageType ) );
+			DouyuReconnectionBarrageServerHandler handler =
+					new DouyuReconnectionBarrageServerHandler( address, messageListener, roomId, defaultMessageType );
+			handler.setDouyuCookie( douyuCookie );
+			pipeline.addLast( handler );
 		}
 	}
 

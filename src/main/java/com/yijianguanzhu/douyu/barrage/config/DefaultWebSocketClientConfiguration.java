@@ -54,7 +54,7 @@ public class DefaultWebSocketClientConfiguration {
 			Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener,
 			boolean retry ) {
 		BaseBarrageServerConnectionAddress address = BasePullBarrageServerConnectionAddress.PULL_ADDRESS.next();
-		return connect( address, DouyuConfiguration.defaultPullMessageType(), messageListener, retry, roomId );
+		return connect( address, DouyuConfiguration.defaultPullMessageType(), messageListener, retry, roomId, null );
 	}
 
 	/**
@@ -72,20 +72,22 @@ public class DefaultWebSocketClientConfiguration {
 		/**
 		 * 挂机直播间不允许断线重连，如需要这个功能，由上层实现。
 		 */
-		return connect( address, pushBarrage, messageListener, retry, roomId );
+		return connect( address, pushBarrage, messageListener, retry, roomId, cookie );
 	}
 
 	public static ChannelFuture connect( BaseBarrageServerConnectionAddress address, DefaultPushMessageType messageType,
 			Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener,
-			boolean retry, long roomId ) {
+			boolean retry, long roomId, DouyuCookie cookie ) {
 		final URI uri = address.getAddress();
 		final ChannelFuture connect = bootstrap( uri ).connect( uri.getHost(), uri.getPort() );
 		connect.addListener( connectFuture -> {
 			if ( connectFuture.isSuccess() ) {
 				log.info( "({})地址连接成功.", uri.toString() );
 				Channel channel = connect.channel();
-				channel.pipeline()
-						.addLast( new DouyuAutoJoinBarrageServerHandler( messageType, roomId, messageListener, address, retry ) );
+				DouyuAutoJoinBarrageServerHandler handler =
+						new DouyuAutoJoinBarrageServerHandler( messageType, roomId, messageListener, address, retry );
+				handler.setDouyuCookie( cookie );
+				channel.pipeline().addLast( handler );
 
 				channel.closeFuture().addListener( closeFuture -> {
 					log.info( "({})连接已关闭. [roomId：{}]", uri, roomId );
@@ -95,7 +97,7 @@ public class DefaultWebSocketClientConfiguration {
 			log.error( "({})地址连接失败. Cause By \n", uri.toString(), connectFuture.cause() );
 			if ( retry ) {
 				log.info( "尝试使用新地址重新连接." );
-				connect( address.next(), messageType, messageListener, retry, roomId );
+				connect( address.next(), messageType, messageListener, true, roomId, cookie );
 			}
 		} );
 		return connect;

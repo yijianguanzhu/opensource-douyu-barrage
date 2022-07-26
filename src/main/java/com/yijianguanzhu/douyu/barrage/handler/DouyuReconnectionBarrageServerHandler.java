@@ -26,11 +26,14 @@ import com.yijianguanzhu.douyu.barrage.enums.BaseMessageTypeEnum;
 import com.yijianguanzhu.douyu.barrage.function.BiConsumer;
 import com.yijianguanzhu.douyu.barrage.model.BaseMessage;
 import com.yijianguanzhu.douyu.barrage.model.DefaultPushMessageType;
+import com.yijianguanzhu.douyu.barrage.model.DouyuCookie;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,6 +46,8 @@ public class DouyuReconnectionBarrageServerHandler extends ChannelDuplexHandler 
 	private long roomId;
 	private DefaultPushMessageType defaultMessageType;
 	private Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener;
+	@Setter
+	private DouyuCookie douyuCookie;
 
 	public DouyuReconnectionBarrageServerHandler( BaseBarrageServerConnectionAddress address,
 			Map<BaseMessageTypeEnum, BiConsumer<String, BaseMessage, ChannelHandlerContext>> messageListener, long roomId,
@@ -71,8 +76,12 @@ public class DouyuReconnectionBarrageServerHandler extends ChannelDuplexHandler 
 		log.info( "({})连接中断，{}秒后，尝试使用新地址重新连接. [roomId:{}]", address.getAddress().toString(),
 				DouyuConfiguration.RECONNECTION_DELAY_SECONDS, roomId );
 		ctx.executor().schedule(
-				() -> DefaultWebSocketClientConfiguration.connect( address.next(), defaultMessageType, messageListener, true,
-						roomId ),
+				() ->
+						Objects.isNull( douyuCookie ) ?
+								DefaultWebSocketClientConfiguration
+										.connect( address.next(), defaultMessageType, messageListener, true, roomId, douyuCookie ) :
+								DefaultWebSocketClientConfiguration.login( roomId, messageListener, douyuCookie, true )
+				,
 				DouyuConfiguration.RECONNECTION_DELAY_SECONDS, TimeUnit.SECONDS );
 		ctx.fireChannelInactive();
 	}
