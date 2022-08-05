@@ -29,8 +29,13 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
-	ERROR_51(51, "通道关闭信号"), ERROR_59(59, "在其他地方登录直播间"), ERROR_207(207, "参数校验不通过"), ERROR_267(267,
-			"同一个ip，账号打开的房间过多"), ERROR_4202(4202, "cookie过期"), ERROR_4207(4207, "参数校验不通过 || cookie过期");
+	ERROR_51( 51, "通道关闭信号" ),
+	ERROR_59( 59, "在其他地方登录直播间" ),
+	ERROR_207( 207, "参数校验不通过" ),
+	ERROR_252( 252, "退出直播间" ),
+	ERROR_267( 267, "同一个ip，账号打开的房间过多" ),
+	ERROR_4202( 4202, "cookie过期" ),
+	ERROR_4207( 4207, "参数校验不通过 || cookie过期" );
 
 	private int code;
 
