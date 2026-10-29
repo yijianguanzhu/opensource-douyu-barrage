@@ -280,4 +280,19 @@ public class BaseMessage {
 	 */
 	private String desc;
 
+	/**
+	 * 发送弹幕后服务器回执(chatres)状态码
+	 */
+	private String res;
+
+	/**
+	 * 发送弹幕后服务器回执(chatres)发言冷却时间(秒)
+	 */
+	private String cd;
+
+	/**
+	 * 发送弹幕后服务器回执(chatres)弹幕长度上限
+	 */
+	private String len;
+
 }

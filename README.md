@@ -6,6 +6,10 @@
 
 2. 发送弹幕/挂机直播间功能示例在com.yijianguanzhu.douyu.barrage#Main类中。
 
+3. 发送弹幕：使用 `DefaultWebSocketClientConfiguration.pushMessage( cookie, content )` 构建消息后 `writeAndFlush` 即可，内容中的 `\`、`@` 与 `/` 会自动转义（与网页版行为一致）；发送结果可通过监听 `MessageType.CHAT_RES` 获取服务器回执（含 res 状态码、cd 发言冷却、len 弹幕长度上限）。
+
+4. 协议细节与逆向证据详见 [docs/协议逆向-2026-10-REA.md](docs/协议逆向-2026-10-REA.md)（vk 签名源码级验证、网关加密签名算法还原、完整请求链路）。
+
 ## 交流
 如果你有更好的想法，欢迎加入QQ群：250097154
 

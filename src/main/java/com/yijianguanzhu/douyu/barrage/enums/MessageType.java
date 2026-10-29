@@ -47,6 +47,9 @@ public enum MessageType implements BaseMessageTypeEnum {
 	// 推送弹幕消息
 	CHAT_MESSAGE("chatmessage"),
 
+	// 发送弹幕后服务器的回执(含res状态码/cd发言冷却/len弹幕长度上限等)
+	CHAT_RES("chatres"),
+
 	// 领取鱼丸暴击
 	ONLINE_GIFT("onlinegift"),
 

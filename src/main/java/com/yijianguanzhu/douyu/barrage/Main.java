@@ -20,7 +20,7 @@
 package com.yijianguanzhu.douyu.barrage;
 
 import com.yijianguanzhu.douyu.barrage.bootstrap.Douyu;
-import com.yijianguanzhu.douyu.barrage.config.DouyuConfiguration;
+import com.yijianguanzhu.douyu.barrage.config.DefaultWebSocketClientConfiguration;
 import com.yijianguanzhu.douyu.barrage.enums.MessageType;
 import com.yijianguanzhu.douyu.barrage.model.DouyuCookie;
 import io.netty.channel.ChannelHandlerContext;
@@ -82,21 +82,20 @@ public class Main {
 			System.out.println( builder.toString() );
 			// 弹幕跟读示例，应当设置合理间隔，否则会触发短信验证
 			if ( context.get() != null ) {
-				context.get().writeAndFlush( String
-						.format( DouyuConfiguration.defaultPushMessageType().getPushMessage(), encode( baseMessage.getTxt() ),
-								cookie.getAcf_uid(), System.currentTimeMillis() ) );
+				// 使用 pushMessage(cookie, content) 构建弹幕消息，内容中的 @ 与 / 会自动转义
+				context.get().writeAndFlush( DefaultWebSocketClientConfiguration
+						.pushMessage( cookie, baseMessage.getTxt() ) );
 			}
 		} ).room().roomId( 312212L ).login();
-		Douyu.push( cookie ).registerMessageListener( MessageType.ALL, ( a, b, c ) -> {
-			System.out.println( a );
-			context.set( c );
-		} ).room().roomId( 312212L ).login();
-	}
-
-	private static String encode( String txt ) {
-		if ( !txt.isEmpty() && ( txt.contains( "@" ) || txt.contains( "/" ) ) ) {
-			return txt.replaceAll( "@", "@A" ).replaceAll( "/", "@S" );
-		}
-		return txt;
+		Douyu.push( cookie )
+				// 监听发送弹幕后的服务器回执：res=状态码 / cd=发言冷却(秒) / len=弹幕长度上限
+				.registerMessageListener( MessageType.CHAT_RES, ( jsonString, baseMessage, c ) -> {
+					System.out.println( "弹幕发送回执: res=" + baseMessage.getRes() + ", cd=" + baseMessage.getCd()
+							+ "s, len=" + baseMessage.getLen() + ", txt=" + baseMessage.getTxt() );
+				} )
+				.registerMessageListener( MessageType.ALL, ( a, b, c ) -> {
+					System.out.println( a );
+					context.set( c );
+				} ).room().roomId( 312212L ).login();
 	}
 }

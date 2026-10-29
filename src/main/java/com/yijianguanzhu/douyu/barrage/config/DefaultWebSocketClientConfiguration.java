@@ -65,10 +65,15 @@ public class DefaultWebSocketClientConfiguration {
 			DouyuCookie cookie, boolean retry ) {
 		BaseBarrageServerConnectionAddress address = BasePushBarrageServerConnectionAddress.PUSH_ADDRESS.next();
 		DefaultPushMessageType pushBarrage = DouyuConfiguration.defaultPushMessageType();
+		// rt 与 vk 必须使用同一秒时间戳(网页版 gatewayLogin 源码：vk = md5(rt + secret + devid))，
+		// 分别调用 currentTimeMillis() 在跨秒边界会导致 vk 与 rt 不匹配
+		long rt = System.currentTimeMillis() / 1000L;
 		pushBarrage
 				.setLogin( String.format( pushBarrage.getLogin(), roomId, cookie.getAcf_username(), cookie.getAcf_ltkid(),
-						cookie.getAcf_biz(), cookie.getAcf_stk(), cookie.getAcf_did(), System.currentTimeMillis() / 1000L,
-						vk( cookie.getAcf_did() ) ) );
+						cookie.getAcf_biz(), cookie.getAcf_stk(), cookie.getAcf_did(), rt,
+						vk( cookie.getAcf_did(), rt ) ) );
+		// login 已是最终报文，处理器直接发送，不再二次 String.format
+		pushBarrage.setPreFormatted( true );
 		/**
 		 * 挂机直播间不允许断线重连，如需要这个功能，由上层实现。
 		 */
@@ -116,11 +121,40 @@ public class DefaultWebSocketClientConfiguration {
 	}
 
 	/**
-	 * 挂机直播间配置
+	 * 挂机直播间配置。vk 秘钥与拼接顺序已源码级验证(2026-10 网页版 room_common_*.js gatewayLogin)：
+	 * {@code vk = md5(rt + secret + devid)}，网页版至今仍使用该老秘钥。
 	 */
 	public static String vk_secret = "r5*^5;}2#${XF[h+;'./.Q'1;,-]f'p[";
 
-	private static String vk( String devid ) {
-		return DigestUtils.md5Hex( System.currentTimeMillis() / 1000L + vk_secret + devid );
+	private static String vk( String devid, long rt ) {
+		return DigestUtils.md5Hex( rt + vk_secret + devid );
+	}
+
+	/**
+	 * <p>
+	 * 构建一条可直接 {@code ctx.writeAndFlush(...)} 发送的弹幕消息(推送连接)，格式与斗鱼网页最新版(2026-10)抓包一致：
+	 * {@code pe@=0/content@=%s/col@=0/type@=chatmessage/dy@=%s/sender@=%d/ifs@=0/nc@=0/dat@=0/rev@=0/tts@=0/admzq@=0/cst@=%d/}
+	 * </p>
+	 * <p>
+	 * 弹幕内容转义与网页版行为一致(源码逆向自 room_common_*.js 的 chatmessage 预处理 + STT 序列化器)：
+	 * <ol>
+	 * <li>反斜杠 {@code \} 先转为全角 {@code ＼}，连续两个再合并为一个(网页版 {@code replace(/\\/g,"＼").replace(/＼＼/g,"＼")} 的行为)；</li>
+	 * <li>{@code @} 与 {@code /} 按斗鱼 STT 协议转义为 {@code @A} / {@code @S}(key 与 value 均转义)。</li>
+	 * </ol>
+	 * 调用方无需再处理。
+	 * </p>
+	 *
+	 * @param cookie 登录Cookie，需正确设置 acf_did(设备ID) 与 acf_uid(用户ID)
+	 * @param content 弹幕内容
+	 * @return 可直接发送的 STT 消息
+	 */
+	public static String pushMessage( DouyuCookie cookie, String content ) {
+		String escaped = content == null ? "" : content
+				.replace( "\\", "＼" )
+				.replace( "＼＼", "＼" )
+				.replace( "@", "@A" )
+				.replace( "/", "@S" );
+		return String.format( DouyuConfiguration.defaultPushMessageType().getPushMessage(),
+				escaped, cookie.getAcf_did(), cookie.getAcf_uid(), System.currentTimeMillis() );
 	}
 }

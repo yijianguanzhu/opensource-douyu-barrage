@@ -35,6 +35,12 @@ public class DefaultPushMessageType implements Cloneable {
 	protected String logout;
 	protected String pushMessage;
 	protected int gid;
+	/**
+	 * 是否已是格式化完成、可直接发送的最终报文。
+	 * 推送(挂机)连接的 login 在 {@code DefaultWebSocketClientConfiguration.login(...)} 中已按
+	 * cookie/vk 等参数完成格式化，置为 true 后处理器不再对其做 {@code String.format}，避免二次格式化。
+	 */
+	protected boolean preFormatted;
 
 	@Override
 	public DefaultPushMessageType clone() throws CloneNotSupportedException {

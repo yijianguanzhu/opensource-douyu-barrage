@@ -82,16 +82,7 @@ public class DouyuAutoJoinBarrageServerHandler extends ChannelDuplexHandler {
 			// 服务器端希望我们返回一个心跳
 			if ( MessageType.PING_REQ.getType().equals( baseMessage.getType() )
 					|| MessageType.MSG_REPEATER_PROXY_LIST.getType().equals( baseMessage.getType() ) ) {
-				DefaultPingPongRunnable runnable = new DefaultPingPongRunnable( ctx, defaultMessageType, roomId,
-						url( ctx.pipeline() ) );
-				// 定时任务
-				runnable.schedule();
-				runnable.run();
-
-				// 删除handler，在成功加入弹幕服务器后，这些handler没用了
-				remove( ctx.pipeline() );
-				// 添加handler，处理消息
-				add( ctx.pipeline() );
+				startHeartbeatAndSwapPipeline( ctx );
 			}
 
 			// 获取JsonString
@@ -101,6 +92,22 @@ public class DouyuAutoJoinBarrageServerHandler extends ChannelDuplexHandler {
 		}
 		// 消息透传
 		ctx.fireChannelRead( msgs );
+	}
+
+	/**
+	 * 启动心跳并切换 pipeline(移除本 handler，挂载消息分发/重连 handler)，幂等。
+	 */
+	private void startHeartbeatAndSwapPipeline( ChannelHandlerContext ctx ) {
+		DefaultPingPongRunnable runnable = new DefaultPingPongRunnable( ctx, defaultMessageType, roomId,
+			url( ctx.pipeline() ) );
+		// 定时任务
+		runnable.schedule();
+		runnable.run();
+
+		// 删除handler，在成功加入弹幕服务器后，这些handler没用了
+		remove( ctx.pipeline() );
+		// 添加handler，处理消息
+		add( ctx.pipeline() );
 	}
 
 	// 握手通知
@@ -134,7 +141,10 @@ public class DouyuAutoJoinBarrageServerHandler extends ChannelDuplexHandler {
 				log.debug( "The Handshake was complete succesful and so the channel was upgraded to websockets, roomId({})",
 						roomId );
 				log.info( "登录斗鱼(房间：{})弹幕服务器", roomId );
-				ctx.writeAndFlush( String.format( defaultMessageType.getLogin(), roomId ) );
+				// 推送(挂机)连接的 login 已在 DefaultWebSocketClientConfiguration.login(...) 中按 cookie/vk
+				// 完成格式化(loginPreFormatted=true)，直接发送，避免二次 String.format(任一字段含 % 会出错)
+				String login = defaultMessageType.getLogin();
+				ctx.writeAndFlush( defaultMessageType.isPreFormatted() ? login : String.format( login, roomId ) );
 			}
 		}
 		ctx.fireUserEventTriggered( evt );
